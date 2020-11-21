@@ -25,7 +25,6 @@ function App() {
 
   const processApiResult = result => {
     if (result.status !== 200) return alert(`Error: ${result.statusText}`)
-    console.log(result)
 		const { hits } = result.data
 		
     setPagesCount( Math.ceil(hits.length / IMAGES_PER_PAGE) )
@@ -33,7 +32,12 @@ function App() {
   }
 
   useEffect(() => {
-		if (images && images.length > 0) showPageImages()
+		if (images && images.length > 0) {
+			const indexStart = currentPage * IMAGES_PER_PAGE - IMAGES_PER_PAGE
+			const indexEnd = currentPage * IMAGES_PER_PAGE - 1 
+			setPageImages( images.slice(indexStart, indexEnd + 1) )
+			scrollToUp()
+		}
   }, [images, currentPage])
 
   const increaseCurrentPage = () => {
@@ -46,13 +50,10 @@ function App() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
     } 
-  }
+	}
 
-  const showPageImages = () => {
-    //show images page
-    const indexStart = currentPage * IMAGES_PER_PAGE - IMAGES_PER_PAGE
-		const indexEnd = currentPage * IMAGES_PER_PAGE - 1 
-		setPageImages( images.slice(indexStart, indexEnd + 1) )
+	const scrollToUp = () => {
+		document.querySelector('.jumbotron').scrollIntoView({ behavior: 'smooth' })
 	}
 
   return (

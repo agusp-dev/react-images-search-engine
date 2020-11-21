@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const ImageCard = ({ hit }) => {
-  const { largeImageURL, likes, previewURL, tags, views } = hit
+  const { largeImageURL, likes, previewURL, views } = hit
   return (
     <div className='col-12 col-sm-6 col-md-4 col-lg-3 mb-4'>
       <div className='card'>
