@@ -26,37 +26,34 @@ function App() {
   const processApiResult = result => {
     if (result.status !== 200) return alert(`Error: ${result.statusText}`)
     console.log(result)
-    const { hits } = result.data
+		const { hits } = result.data
+		
     setPagesCount( Math.ceil(hits.length / IMAGES_PER_PAGE) )
     setImages(hits)
-    // showPageImages()
   }
 
   useEffect(() => {
-    
-  }, [currentPage])
+		if (images && images.length > 0) showPageImages()
+  }, [images, currentPage])
 
   const increaseCurrentPage = () => {
     if (currentPage < pagesCount) {
       setCurrentPage(currentPage + 1)
-      // showPageImages()
     }
   }
 
   const decreaseCurrentPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
-      // showPageImages()
     } 
   }
 
   const showPageImages = () => {
     //show images page
     const indexStart = currentPage * IMAGES_PER_PAGE - IMAGES_PER_PAGE
-    const indexEnd = currentPage * IMAGES_PER_PAGE - 1 
-
-    console.log('start: ', indexStart, 'end: ', indexEnd)
-  }
+		const indexEnd = currentPage * IMAGES_PER_PAGE - 1 
+		setPageImages( images.slice(indexStart, indexEnd + 1) )
+	}
 
   return (
     <div className="App">
@@ -67,7 +64,7 @@ function App() {
         </div>
         {images && (
           <div className='row justify-content-center mb-4'>
-            <ImagesList images={ images }/>
+            <ImagesList images={ pageImages }/>
             <button 
               type='button'
               className='bbtn btn-info mr-1'
@@ -81,7 +78,7 @@ function App() {
               type='button'
               className='bbtn btn-info mr-1'
               onClick={ increaseCurrentPage }
-            >Last &raquo;
+            >Next &raquo;
             </button>
           </div>
         )}
