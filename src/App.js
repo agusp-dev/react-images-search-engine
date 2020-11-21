@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Form } from './components'
+import { Form, ImagesList } from './components'
 import { getPixaBayImages } from './services'
 
 function App() {
 
+  const IMAGES_PER_PAGE = 8
+
   const [search, startSearch] = useState('')
+  const [images, setImages] = useState([])
+  const [pageImages, setPageImages] = useState([])
+
+  //pager
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pagesCount, setPagesCount] = useState(1)
+
   useEffect(() => {
     if (!search) return
     const getApiImages = async () => {
@@ -16,8 +25,37 @@ function App() {
 
   const processApiResult = result => {
     if (result.status !== 200) return alert(`Error: ${result.statusText}`)
+    console.log(result)
     const { hits } = result.data
-    console.log('hits', hits)
+    setPagesCount( Math.ceil(hits.length / IMAGES_PER_PAGE) )
+    setImages(hits)
+    // showPageImages()
+  }
+
+  useEffect(() => {
+    
+  }, [currentPage])
+
+  const increaseCurrentPage = () => {
+    if (currentPage < pagesCount) {
+      setCurrentPage(currentPage + 1)
+      // showPageImages()
+    }
+  }
+
+  const decreaseCurrentPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+      // showPageImages()
+    } 
+  }
+
+  const showPageImages = () => {
+    //show images page
+    const indexStart = currentPage * IMAGES_PER_PAGE - IMAGES_PER_PAGE
+    const indexEnd = currentPage * IMAGES_PER_PAGE - 1 
+
+    console.log('start: ', indexStart, 'end: ', indexEnd)
   }
 
   return (
@@ -27,6 +65,26 @@ function App() {
           <p className='lead text-center'>Buscador de Imagenes</p>
           <Form startSearch={ startSearch }/>
         </div>
+        {images && (
+          <div className='row justify-content-center mb-4'>
+            <ImagesList images={ images }/>
+            <button 
+              type='button'
+              className='bbtn btn-info mr-1'
+              onClick={ decreaseCurrentPage }
+            >&laquo; Previus
+            </button>
+            <div className='ml-3 mr-3'>
+              { `Page ${ currentPage } / ${ pagesCount }` }
+            </div>
+            <button 
+              type='button'
+              className='bbtn btn-info mr-1'
+              onClick={ increaseCurrentPage }
+            >Last &raquo;
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
